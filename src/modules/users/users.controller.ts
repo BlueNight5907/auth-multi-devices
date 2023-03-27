@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { UseLanguageInterceptor } from 'src/interceptors/language-interceptor.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
-@Controller('users')
+ApiTags('users');
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -13,6 +24,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseLanguageInterceptor()
   findAll() {
     return this.usersService.findAll();
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -9,6 +9,7 @@ export class UsersService {
   }
 
   findAll() {
+    throw new UnauthorizedException('abc');
     return `This action returns all users`;
   }
 
