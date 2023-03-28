@@ -1,6 +1,7 @@
+import { LanguageInterceptor } from './interceptors/language-interceptor.service';
 import { SharedModule } from './shared/shared.module';
 import { QueryFailedFilter } from './filters/query-failed.filter';
-import { UnprocessableEntityFilter } from './filters/bad-request.filter';
+import { UnprocessableEntityFilter } from './filters/i18n-validation-exception.filter';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import type { NestExpressApplication } from '@nestjs/platform-express';
@@ -9,15 +10,20 @@ import { middleware as expressCtx } from 'express-http-context';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
+import Fingerprint from 'express-fingerprint';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { setupSwagger } from './setup-swagger';
 import InternalServerErrorExceptionFilter from './filters/internal-server-error.filter';
 import {
+  ClassSerializerInterceptor,
   HttpStatus,
   UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common';
+import { TranslationInterceptor } from './interceptors/translation-interceptor.service';
+import { TranslationService } from './shared/services/translation.service';
+import { I18nMiddleware, i18nValidationErrorFactory } from 'nestjs-i18n';
 
 async function bootstrap(): Promise<NestExpressApplication> {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -32,13 +38,39 @@ async function bootstrap(): Promise<NestExpressApplication> {
   app.use(morgan('combined'));
   app.enableVersioning();
 
+  // enable fingerprint
+  app.use(Fingerprint());
+
+  // use I18nMiddleware
+  app.use(I18nMiddleware);
+
   const reflector = app.get(Reflector);
 
-  app.useGlobalFilters(
+  const configService = app
+    .select(SharedModule)
+    .get<ApiConfigService>(ApiConfigService);
+
+  const translationService = app
+    .select(SharedModule)
+    .get<TranslationService>(TranslationService);
+
+  const listFilters = [
     new InternalServerErrorExceptionFilter(),
-    new HttpExceptionFilter(reflector),
-    new UnprocessableEntityFilter(reflector),
-    new QueryFailedFilter(reflector),
+    new HttpExceptionFilter(reflector, translationService),
+    new UnprocessableEntityFilter(reflector, translationService),
+    new QueryFailedFilter(reflector, translationService),
+  ];
+
+  if (!configService.isDevelopment) {
+    listFilters.shift();
+  }
+
+  app.useGlobalFilters(...listFilters);
+
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(reflector),
+    new LanguageInterceptor(),
+    new TranslationInterceptor(translationService),
   );
 
   app.useGlobalPipes(
@@ -46,14 +78,10 @@ async function bootstrap(): Promise<NestExpressApplication> {
       whitelist: true,
       errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       transform: true,
-      dismissDefaultMessages: true,
-      exceptionFactory: (errors) => new UnprocessableEntityException(errors),
+      dismissDefaultMessages: false,
+      exceptionFactory: i18nValidationErrorFactory,
     }),
   );
-
-  const configService = app
-    .select(SharedModule)
-    .get<ApiConfigService>(ApiConfigService);
 
   if (configService.documentationEnabled) {
     setupSwagger(app);

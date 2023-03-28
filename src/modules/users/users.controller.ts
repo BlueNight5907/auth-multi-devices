@@ -1,3 +1,4 @@
+import { ContextProvider } from './../../providers/context-provider';
 import {
   Body,
   Controller,
@@ -7,10 +8,10 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { UseLanguageInterceptor } from 'src/interceptors/language-interceptor.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { I18n, I18nContext } from 'nestjs-i18n';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
 
 ApiTags('users');
@@ -24,14 +25,15 @@ export class UsersController {
   }
 
   @Get()
-  @UseLanguageInterceptor()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @ApiQuery({ name: 'lang', required: false })
+  findAll(@I18n() i18n: I18nContext) {
+    return {
+      language: i18n.service.getSupportedLanguages(),
+      lang: i18n.lang,
+      translation: i18n.translate('exception.unauthorized', {
+        lang: ContextProvider.getLanguage(),
+      }),
+    };
   }
 
   @Patch(':id')

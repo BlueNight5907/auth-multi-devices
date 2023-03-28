@@ -24,13 +24,13 @@ export interface IDeviceSessionEntity
 }
 
 @UseDto(DeviceSessionDto)
-@Entity({ name: 'device-sessions' })
+@Entity({ name: 'device_sessions' })
 @Index(['deviceId'], { unique: true })
 export class DeviceSessionEntity
   extends AbstractEntity<DeviceSessionDto>
   implements IDeviceSessionEntity
 {
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   deviceId: string;
 
   @Column({ nullable: false })
@@ -55,6 +55,6 @@ export class DeviceSessionEntity
   userId: number;
 
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.deviceSessions)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

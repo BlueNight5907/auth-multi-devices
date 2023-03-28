@@ -5,6 +5,7 @@ import {
   ExceptionFilter,
   HttpStatus,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { STATUS_CODES } from 'http';
@@ -13,8 +14,10 @@ import { STATUS_CODES } from 'http';
 export default class InternalServerErrorExceptionFilter
   implements ExceptionFilter
 {
+  private logger = new Logger('HttpExceptionFilter');
   catch(exception: Error, host: ArgumentsHost) {
     const { message, stack: errStack, name: errName } = exception;
+    this.logger.debug(message, errStack, errName);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = HttpStatus.INTERNAL_SERVER_ERROR;

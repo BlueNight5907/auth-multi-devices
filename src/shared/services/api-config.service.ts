@@ -67,7 +67,7 @@ export class ApiConfigService {
       migrations,
       keepConnectionAlive: !this.isTest,
       dropSchema: this.isTest,
-      type: 'postgres',
+      type: 'mysql',
       name: 'default',
       host: this.getString('DB_HOST'),
       port: this.getNumber('DB_PORT'),
@@ -77,30 +77,12 @@ export class ApiConfigService {
       migrationsRun: true,
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       namingStrategy: new SnakeNamingStrategy(),
-    };
-  }
-
-  get awsS3Config() {
-    return {
-      bucketRegion: this.getString('AWS_S3_BUCKET_REGION'),
-      bucketApiVersion: this.getString('AWS_S3_API_VERSION'),
-      bucketName: this.getString('AWS_S3_BUCKET_NAME'),
+      synchronize: true,
     };
   }
 
   get documentationEnabled(): boolean {
     return this.getBoolean('ENABLE_DOCUMENTATION');
-  }
-
-  get natsEnabled(): boolean {
-    return this.getBoolean('NATS_ENABLED');
-  }
-
-  get natsConfig() {
-    return {
-      host: this.getString('NATS_HOST'),
-      port: this.getNumber('NATS_PORT'),
-    };
   }
 
   get authConfig() {

@@ -1,0 +1,4 @@
+{
+  "unauthorized": "Chưa xác thực",
+  "exist_user": "Người dùng với email {email} đã tồn tại"
+}

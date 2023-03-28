@@ -1,6 +1,6 @@
 import { AbstractDto } from 'src/common/dto/abstract.dto';
 import { ClassField, StringField } from 'src/decorators';
-import { UserDto } from 'src/modules/users/dto/user.dto';
+import { UserDto } from 'src/modules/users/dtos/user.dto';
 import { DeviceSessionEntity } from '../entities/device-session.entity';
 
 export class DeviceSessionDto extends AbstractDto {

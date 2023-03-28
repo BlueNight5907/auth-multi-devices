@@ -1,4 +1,5 @@
-import { HidePropertyValue, StringField } from 'src/decorators';
+import { Exclude } from 'class-transformer';
+import { StringField } from 'src/decorators';
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import { UserEntity } from '../entities/user.entity';
 
@@ -9,10 +10,10 @@ export class UserDto extends AbstractDto {
   @StringField()
   email: string;
 
-  @HidePropertyValue()
+  @Exclude()
   password: string;
 
-  @HidePropertyValue()
+  @Exclude()
   salt: string;
 
   constructor(entity: UserEntity) {

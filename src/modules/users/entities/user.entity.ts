@@ -3,7 +3,7 @@ import { IAbstractEntity } from './../../../common/abstract.entity';
 import { AbstractEntity } from '../../../common/abstract.entity';
 import { UseDto } from '../../../decorators';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../dtos/user.dto';
 
 export interface IUserEntity extends IAbstractEntity<UserDto> {
   name: string;

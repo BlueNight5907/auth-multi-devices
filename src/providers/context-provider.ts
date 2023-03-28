@@ -1,5 +1,5 @@
 import httpContext from 'express-http-context';
-import { contextProviderKeys } from 'src/const';
+import { contextProviderKeys, LanguageCode } from 'src/constants';
 
 export class ContextProvider {
   private static setUserId(value: string) {
@@ -7,6 +7,14 @@ export class ContextProvider {
   }
   private static getUserId(): string | undefined {
     return this.get<string>(contextProviderKeys.USER_ID);
+  }
+
+  static setLanguage(language: string): void {
+    ContextProvider.set(contextProviderKeys.LANGUAGE_KEY, language);
+  }
+
+  static getLanguage(): LanguageCode | undefined {
+    return ContextProvider.get<LanguageCode>(contextProviderKeys.LANGUAGE_KEY);
   }
 
   private static set<T>(key: string, value: T) {

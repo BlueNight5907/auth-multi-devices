@@ -1,0 +1,4 @@
+{
+  "unauthorized": "Unauthorized",
+  "exist_user": "Exist user with email {email}"
+}
