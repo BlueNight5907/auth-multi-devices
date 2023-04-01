@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/decorators';
 import { ContextProvider } from 'src/providers';
 import { DeviceSessionsService } from './device-sessions.service';
+import { DeviceSessionDto } from './dtos/device-session.dto';
+import { AbstracDtoOptions } from 'src/common/dto/abstract.dto';
 
 @ApiTags('device-sessions')
 @Controller()
@@ -16,6 +18,6 @@ export class DeviceSessionsController {
     const deviceSessionList =
       await this.deviceSessionsService.getDeviceSessions(payload.userId);
 
-    return deviceSessionList.toDtos();
+    return deviceSessionList.toDtos<DeviceSessionDto, AbstracDtoOptions>();
   }
 }

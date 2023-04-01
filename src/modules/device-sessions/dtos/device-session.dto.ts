@@ -1,4 +1,4 @@
-import { Exclude, instanceToPlain } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { AbstractDto } from 'src/common/dto/abstract.dto';
 import { ClassField, ClassFieldOptional, StringField } from 'src/decorators';
 import { UserDto } from 'src/modules/users/dtos/user.dto';

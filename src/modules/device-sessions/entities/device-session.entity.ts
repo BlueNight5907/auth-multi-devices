@@ -4,9 +4,10 @@ import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { IAbstractEntity } from './../../../common/abstract.entity';
 import { DeviceSessionDto } from './../dtos/device-session.dto';
+import { AbstracDtoOptions } from 'src/common/dto/abstract.dto';
 
 export interface IDeviceSessionEntity
-  extends IAbstractEntity<DeviceSessionDto> {
+  extends IAbstractEntity<DeviceSessionDto, AbstracDtoOptions> {
   deviceId: string;
   name: string;
   ua: string;

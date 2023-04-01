@@ -5,8 +5,10 @@ import { UseDto } from '../../../decorators';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { UserDto } from '../dtos/user.dto';
 import { RoleType } from 'src/constants';
+import { AbstracDtoOptions } from 'src/common/dto/abstract.dto';
 
-export interface IUserEntity extends IAbstractEntity<UserDto> {
+export interface IUserEntity
+  extends IAbstractEntity<UserDto, AbstracDtoOptions> {
   name: string;
   email: string;
   password: string;
