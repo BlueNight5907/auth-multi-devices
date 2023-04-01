@@ -1,6 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { StringField } from 'src/decorators';
-import { AbstractDto } from '../../../common/dto/abstract.dto';
+import {
+  AbstracDtoOptions,
+  AbstractDto,
+} from '../../../common/dto/abstract.dto';
 import { UserEntity } from '../entities/user.entity';
 
 export class UserDto extends AbstractDto {
@@ -16,7 +19,7 @@ export class UserDto extends AbstractDto {
   @Exclude()
   salt: string;
 
-  constructor(entity: UserEntity) {
-    super(entity);
+  constructor(entity: UserEntity, options: AbstracDtoOptions) {
+    super(entity, options);
   }
 }

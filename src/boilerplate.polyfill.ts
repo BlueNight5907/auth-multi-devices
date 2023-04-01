@@ -8,7 +8,7 @@ import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import type { Alias } from 'typeorm/query-builder/Alias';
 
 import type { AbstractEntity } from './common/abstract.entity';
-import type { AbstractDto } from './common/dto/abstract.dto';
+import type { AbstracDtoOptions, AbstractDto } from './common/dto/abstract.dto';
 import { PageDto } from './common/dto/page.dto';
 import { PageMetaDto } from './common/dto/page-meta.dto';
 import type { PageOptionsDto } from './common/dto/page-options.dto';
@@ -70,13 +70,15 @@ declare global {
   export type Uuid = string & { _uuidBrand: undefined };
 
   interface Array<T> {
-    toDtos<Dto extends AbstractDto>(this: T[], options?: unknown): Dto[];
+    toDtos<Dto extends AbstractDto, O extends AbstracDtoOptions>(
+      this: T[],
+      options?: O,
+    ): Dto[];
 
-    toPageDto<Dto extends AbstractDto>(
+    toPageDto<Dto extends AbstractDto, O extends AbstracDtoOptions>(
       this: T[],
       pageMetaDto: PageMetaDto,
-      // FIXME make option type visible from entity
-      options?: unknown,
+      options?: O,
     ): PageDto<Dto>;
   }
 }
@@ -143,15 +145,16 @@ declare module 'typeorm' {
 Array.prototype.toDtos = function <
   Entity extends AbstractEntity<Dto>,
   Dto extends AbstractDto,
->(options?: unknown): Dto[] {
+  O extends AbstracDtoOptions,
+>(options?: O): Dto[] {
   return compact(
-    map<Entity, Dto>(this as Entity[], (item) => item.toDto(options as never)),
+    map<Entity, Dto>(this as Entity[], (item) => item.toDto(options)),
   );
 };
 
-Array.prototype.toPageDto = function (
+Array.prototype.toPageDto = function <O extends AbstracDtoOptions>(
   pageMetaDto: PageMetaDto,
-  options?: unknown,
+  options?: O,
 ) {
   return new PageDto(this.toDtos(options), pageMetaDto);
 };
@@ -186,6 +189,7 @@ SelectQueryBuilder.prototype.paginate = async function (
 
   const { entities, raw } = await this.getRawAndEntities();
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const alias = this.expressionMap.mainAlias!;
   const group = groupRows(raw, alias, this.connection.driver);
 
@@ -214,7 +218,9 @@ SelectQueryBuilder.prototype.paginate = async function (
       })
       .join('_');
 
-    const entity = entities.find((item) => item.id === id) as AbstractEntity;
+    const entity = entities.find(
+      (item) => String(item.id) === id,
+    ) as AbstractEntity;
     const metaInfo: Record<string, string> =
       Reflect.getMetadata(VIRTUAL_COLUMN_KEY, entity) ?? {};
 

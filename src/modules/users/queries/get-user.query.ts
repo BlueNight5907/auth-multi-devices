@@ -9,7 +9,7 @@ export class GetUserByEmailQuery implements IQuery {
 
 @QueryHandler(GetUserByEmailQuery)
 export class GetUserByEmailHandler
-  implements IQueryHandler<GetUserByEmailQuery, UserEntity>
+  implements IQueryHandler<GetUserByEmailQuery, UserEntity | null>
 {
   constructor(
     @InjectRepository(UserEntity)

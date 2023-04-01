@@ -1,29 +1,29 @@
-import { LanguageInterceptor } from './interceptors/language-interceptor.service';
-import { SharedModule } from './shared/shared.module';
-import { QueryFailedFilter } from './filters/query-failed.filter';
-import { UnprocessableEntityFilter } from './filters/i18n-validation-exception.filter';
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
-import type { NestExpressApplication } from '@nestjs/platform-express';
-import { ExpressAdapter } from '@nestjs/platform-express/adapters';
-import { middleware as expressCtx } from 'express-http-context';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import compression from 'compression';
-import Fingerprint from 'express-fingerprint';
-import { ApiConfigService } from './shared/services/api-config.service';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { setupSwagger } from './setup-swagger';
-import InternalServerErrorExceptionFilter from './filters/internal-server-error.filter';
+import './boilerplate.polyfill';
 import {
   ClassSerializerInterceptor,
   HttpStatus,
-  UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common';
-import { TranslationInterceptor } from './interceptors/translation-interceptor.service';
-import { TranslationService } from './shared/services/translation.service';
+import { NestFactory, Reflector } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { ExpressAdapter } from '@nestjs/platform-express/adapters';
+import compression from 'compression';
+import Fingerprint from '@shwao/express-fingerprint';
+import { middleware as expressCtx } from 'express-http-context';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import { I18nMiddleware, i18nValidationErrorFactory } from 'nestjs-i18n';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { UnprocessableEntityFilter } from './filters/i18n-validation-exception.filter';
+import InternalServerErrorExceptionFilter from './filters/internal-server-error.filter';
+import { QueryFailedFilter } from './filters/query-failed.filter';
+import { LanguageInterceptor } from './interceptors/language-interceptor.service';
+import { TranslationInterceptor } from './interceptors/translation-interceptor.service';
+import { setupSwagger } from './setup-swagger';
+import { ApiConfigService } from './shared/services/api-config.service';
+import { TranslationService } from './shared/services/translation.service';
+import { SharedModule } from './shared/shared.module';
 
 async function bootstrap(): Promise<NestExpressApplication> {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -39,7 +39,15 @@ async function bootstrap(): Promise<NestExpressApplication> {
   app.enableVersioning();
 
   // enable fingerprint
-  app.use(Fingerprint());
+  app.use(
+    Fingerprint([
+      Fingerprint.useragent(),
+      Fingerprint.acceptHeaders(),
+      Fingerprint.geoIp(),
+      Fingerprint.ip(),
+      Fingerprint.dnt(),
+    ]),
+  );
 
   // use I18nMiddleware
   app.use(I18nMiddleware);

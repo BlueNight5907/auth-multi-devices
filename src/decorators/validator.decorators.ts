@@ -81,6 +81,16 @@ export function Match<K extends string, T extends { [$K in K]: any }>(
           const object = validationArguments.object;
           return object[field] === value;
         },
+
+        defaultMessage(validationArguments) {
+          if (validationOptions?.message) {
+            if (typeof validationOptions.message === 'string') {
+              return validationOptions.message;
+            }
+            return validationOptions.message(validationArguments);
+          }
+          return `${propertyName} not match`;
+        },
       },
       name: snakeCase(`match_${property}`),
     });

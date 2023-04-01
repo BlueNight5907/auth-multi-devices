@@ -4,6 +4,7 @@ import { AbstractEntity } from '../../../common/abstract.entity';
 import { UseDto } from '../../../decorators';
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { UserDto } from '../dtos/user.dto';
+import { RoleType } from 'src/constants';
 
 export interface IUserEntity extends IAbstractEntity<UserDto> {
   name: string;
@@ -27,6 +28,9 @@ export class UserEntity extends AbstractEntity<UserDto> implements IUserEntity {
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   salt: string;
+
+  @Column({ type: 'varchar', default: RoleType.USER, nullable: false })
+  role: RoleType;
 
   @OneToMany(
     () => DeviceSessionEntity,

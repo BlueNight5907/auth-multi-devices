@@ -12,11 +12,28 @@ export class HttpExceptionFilter extends BaseExceptionFilter<HttpException> {
     super(reflector, translationService);
   }
   async catch(exception: HttpException, host: ArgumentsHost) {
+    let message: string | undefined = exception.message;
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
-    const exceptionMessage: ExceptionMessage = JSON.parse(exception.message);
-    let message: string;
+
+    if (!message) {
+      const exceptionResponse = exception.getResponse();
+      if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      } else {
+        message = exceptionResponse['message'] ?? '';
+      }
+    }
+
+    let exceptionMessage: ExceptionMessage;
+    try {
+      exceptionMessage = JSON.parse(message);
+    } catch (error) {
+      exceptionMessage = message;
+    }
+
     if (typeof exceptionMessage === 'string') {
       message = await this.translate(exceptionMessage);
     } else {

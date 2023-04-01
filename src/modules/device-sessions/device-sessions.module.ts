@@ -1,9 +1,18 @@
+import { DeviceSessionEntity } from './entities/device-session.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { DeviceSessionsService } from './device-sessions.service';
 import { DeviceSessionsController } from './device-sessions.controller';
+import { GetDeviceSessionHandler } from './queries/get-device-session.query';
+import { HandleDeviceSessionHandler } from './commands/handle-device-session.command';
+import { GetDeviceSessionsHandler } from './queries/get-device-sessions.query';
 
+const queries = [GetDeviceSessionHandler, GetDeviceSessionsHandler];
+const commands = [HandleDeviceSessionHandler];
 @Module({
+  imports: [TypeOrmModule.forFeature([DeviceSessionEntity])],
   controllers: [DeviceSessionsController],
-  providers: [DeviceSessionsService]
+  providers: [DeviceSessionsService, ...queries, ...commands],
+  exports: [DeviceSessionsService],
 })
 export class DeviceSessionsModule {}

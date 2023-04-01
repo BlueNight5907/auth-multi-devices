@@ -9,10 +9,19 @@ import { ITranslationDecoratorInterface } from 'src/common/interfaces';
 export class TranslationService {
   constructor(private readonly i18n: I18nService) {}
   async translate(key: string, options?: TranslateOptions): Promise<string> {
-    return this.i18n.translate(`${key}`, {
+    const message: string = await this.i18n.translate(`${key}`, {
       ...options,
+      defaultValue: undefined,
       lang: ContextProvider.getLanguage(),
     });
+
+    if (key === message) {
+      return this.i18n.translate(`${key}`, {
+        ...options,
+      });
+    }
+
+    return message;
   }
 
   async translateNecessaryKeys(data: unknown): Promise<any> {

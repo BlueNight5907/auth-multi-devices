@@ -1,20 +1,25 @@
-import { ContextProvider } from './../../providers/context-provider';
+import { ContextProvider } from 'src/providers/context-provider';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Patch,
   Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
+import { AuthGuard } from '@nestjs/passport';
+import { Request as RequestType } from 'express';
 
-ApiTags('users');
+@ApiTags('v1 - users')
 @Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -30,7 +35,8 @@ export class UsersController {
     return {
       language: i18n.service.getSupportedLanguages(),
       lang: i18n.lang,
-      translation: i18n.translate('exception.unauthorized', {
+      translationInstance: i18n.service.translate('exception.unauthorized'),
+      translation: i18n.service.translate('exception.unauthorized', {
         lang: ContextProvider.getLanguage(),
       }),
     };
@@ -44,5 +50,14 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Post('test2')
+  test2(
+    @Request() req: RequestType & { fingerprint: any },
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    console.debug(req.fingerprint);
+    return updateUserDto;
   }
 }

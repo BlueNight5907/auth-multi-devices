@@ -1,7 +1,13 @@
+import { DeviceSessionsModule } from './modules/device-sessions/device-sessions.module';
 import { UsersModule } from './modules/users/users.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
 import path from 'path';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
@@ -17,11 +23,19 @@ const listRoutes: Routes = [
         path: 'users',
         module: UsersModule,
       },
+      {
+        path: 'auth',
+        module: AuthModule,
+      },
+      {
+        path: 'device-sessions',
+        module: DeviceSessionsModule,
+      },
     ],
   },
 ];
 
-const modules = [UsersModule, AuthModule];
+const modules = [UsersModule, AuthModule, DeviceSessionsModule];
 
 @Module({
   imports: [
@@ -44,10 +58,12 @@ const modules = [UsersModule, AuthModule];
         },
         fallbacks: {
           'en-*': 'en',
+          'vi-*': 'vi',
         },
       }),
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
+        { use: HeaderResolver, options: ['x-language-code'] },
         AcceptLanguageResolver,
       ],
       imports: [SharedModule],

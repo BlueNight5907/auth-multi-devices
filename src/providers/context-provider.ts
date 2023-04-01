@@ -1,12 +1,13 @@
 import httpContext from 'express-http-context';
 import { contextProviderKeys, LanguageCode } from 'src/constants';
+import { LoginPayload } from 'src/modules/auth/interfaces/login.interface';
 
 export class ContextProvider {
-  private static setUserId(value: string) {
-    this.set(contextProviderKeys.USER_ID, value);
+  static setPayload(value: LoginPayload) {
+    this.set(contextProviderKeys.PAYLOAD, value);
   }
-  private static getUserId(): string | undefined {
-    return this.get<string>(contextProviderKeys.USER_ID);
+  static getPayload(): LoginPayload | undefined {
+    return this.get<LoginPayload>(contextProviderKeys.PAYLOAD);
   }
 
   static setLanguage(language: string): void {

@@ -1,5 +1,6 @@
+import { Exclude, instanceToPlain } from 'class-transformer';
 import { AbstractDto } from 'src/common/dto/abstract.dto';
-import { ClassField, StringField } from 'src/decorators';
+import { ClassField, ClassFieldOptional, StringField } from 'src/decorators';
 import { UserDto } from 'src/modules/users/dtos/user.dto';
 import { DeviceSessionEntity } from '../entities/device-session.entity';
 
@@ -13,10 +14,10 @@ export class DeviceSessionDto extends AbstractDto {
   @StringField()
   ua: string;
 
-  @StringField()
-  secrectKey: string;
+  @ClassField(() => Object)
+  uaBody: Record<string, any>;
 
-  @StringField()
+  @Exclude()
   refreshToken: string;
 
   @StringField()
@@ -28,11 +29,17 @@ export class DeviceSessionDto extends AbstractDto {
   @StringField()
   userId: number;
 
-  @ClassField(() => UserDto)
-  user: UserDto;
+  @ClassFieldOptional(() => UserDto)
+  user?: UserDto;
+
+  @Exclude()
+  isDeleted: boolean;
+
+  @Exclude()
+  deletedId: string;
 
   constructor(entity: DeviceSessionEntity) {
     super(entity);
-    this.user = entity.user.toDto();
+    this.user = entity.user?.toDto();
   }
 }

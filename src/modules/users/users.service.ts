@@ -1,10 +1,6 @@
-import { CreateUserCommand } from './commands/create-user.command';
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -16,11 +12,7 @@ export class UsersService {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-  ) {
-    this.commandBus.subscribe({
-      next: (value) => console.debug(value, '------'),
-    });
-  }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const entity = await this.findOneByEmail(createUserDto.email);

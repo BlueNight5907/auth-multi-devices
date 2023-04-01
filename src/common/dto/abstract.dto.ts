@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { plainToClassFromExist } from 'class-transformer';
-import type { AbstractEntity } from '../abstract.entity';
+import { AbstractEntity } from '../abstract.entity';
 
+export type AbstracDtoOptions = {
+  excludeFields?: boolean;
+  ingnoreAssignValues?: boolean;
+};
 export class AbstractDto {
   @ApiProperty()
   id: number;
@@ -13,24 +17,20 @@ export class AbstractDto {
   updatedAt: Date;
 
   private assignValue(entity: AbstractEntity, excludeFields?: boolean) {
-    const newEntity: Partial<AbstractEntity> = Object.assign({}, entity);
     if (excludeFields) {
-      delete newEntity.id;
-      delete newEntity.createdAt;
-      delete newEntity.updatedAt;
+      delete entity.createdAt;
+      delete entity.updatedAt;
+      delete entity.id;
     }
     plainToClassFromExist(this, entity);
   }
 
-  constructor(
-    entity: AbstractEntity,
-    options?: { excludeFields?: boolean; ingnoreAssignValues: boolean },
-  ) {
+  constructor(entity: AbstractEntity, options?: AbstracDtoOptions) {
     if (options?.ingnoreAssignValues) {
       if (!options?.excludeFields) {
-        this.id = entity.id;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
+        this.id = entity.id;
       }
     } else {
       this.assignValue(entity, options?.excludeFields);

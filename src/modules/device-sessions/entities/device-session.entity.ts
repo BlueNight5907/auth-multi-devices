@@ -1,31 +1,26 @@
-import { IAbstractEntity } from './../../../common/abstract.entity';
-import { DeviceSessionDto } from './../dtos/device-session.dto';
 import { AbstractEntity } from 'src/common/abstract.entity';
 import { UseDto } from 'src/decorators';
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  RelationId,
-} from 'typeorm';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { IAbstractEntity } from './../../../common/abstract.entity';
+import { DeviceSessionDto } from './../dtos/device-session.dto';
 
 export interface IDeviceSessionEntity
   extends IAbstractEntity<DeviceSessionDto> {
   deviceId: string;
   name: string;
   ua: string;
-  secrectKey: string;
+  uaBody: Record<string, any>;
   refreshToken: string;
   expiredAt: Date;
   ipAddress: string;
+  isDeleted: boolean;
+  deletedId: string;
 }
 
 @UseDto(DeviceSessionDto)
 @Entity({ name: 'device_sessions' })
-@Index(['deviceId'], { unique: true })
+@Index(['deviceId', 'userId', 'deletedId'], { unique: true })
 export class DeviceSessionEntity
   extends AbstractEntity<DeviceSessionDto>
   implements IDeviceSessionEntity
@@ -39,8 +34,8 @@ export class DeviceSessionEntity
   @Column({ nullable: false })
   ua: string;
 
-  @Column({ nullable: false })
-  secrectKey: string;
+  @Column({ type: 'json' })
+  uaBody: Record<string, any>;
 
   @Column({ nullable: false })
   refreshToken: string;
@@ -54,7 +49,13 @@ export class DeviceSessionEntity
   @Column({ nullable: false })
   userId: number;
 
+  @Column({ nullable: false, default: false })
+  isDeleted: boolean;
+
+  @Column({ nullable: false, default: '' })
+  deletedId: string;
+
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.deviceSessions)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user?: UserEntity;
 }

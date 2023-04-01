@@ -77,7 +77,7 @@ export class ApiConfigService {
       migrationsRun: true,
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       namingStrategy: new SnakeNamingStrategy(),
-      synchronize: true,
+      synchronize: false,
     };
   }
 
@@ -87,9 +87,12 @@ export class ApiConfigService {
 
   get authConfig() {
     return {
-      privateKey: this.getString('JWT_PRIVATE_KEY'),
-      publicKey: this.getString('JWT_PUBLIC_KEY'),
+      privateKey: this.getString('JWT_PRIVATE_KEY').replace(/\\n/g, '\n'),
+      publicKey: this.getString('JWT_PUBLIC_KEY').replace(/\\n/g, '\n'),
       jwtExpirationTime: this.getNumber('JWT_EXPIRATION_TIME'),
+      refreshTokenExpirationTime: this.getNumber(
+        'REFRESH_TOKEN_EXPIRATION_TIME',
+      ),
     };
   }
 

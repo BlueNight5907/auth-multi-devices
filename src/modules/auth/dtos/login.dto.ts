@@ -1,8 +1,8 @@
-import { PasswordField, StringField } from 'src/decorators';
+import { EmailField, PasswordField } from 'src/decorators';
 
 export class LoginDto {
-  @StringField({ required: true })
-  username: string;
+  @EmailField({ required: true })
+  email: string;
 
   @PasswordField({ required: true })
   password: string;

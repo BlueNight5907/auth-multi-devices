@@ -1,4 +1,4 @@
-const USER_ID = 'user_id';
+const PAYLOAD = 'login_payload';
 const LANGUAGE_KEY = 'language_key';
 
-export const contextProviderKeys = { USER_ID, LANGUAGE_KEY };
+export const contextProviderKeys = { PAYLOAD, LANGUAGE_KEY };

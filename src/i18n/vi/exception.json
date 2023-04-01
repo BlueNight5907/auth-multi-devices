@@ -1,4 +1,5 @@
 {
   "unauthorized": "Chưa xác thực",
-  "exist_user": "Người dùng với email {email} đã tồn tại"
+  "exist_user": "Người dùng với email {email} đã tồn tại",
+  "login_exception": "Sai mật khẩu hoặc tài khoản không tồn tại"
 }
