@@ -3,9 +3,18 @@ import { contextProviderKeys, LanguageCode } from 'src/constants';
 import { LoginPayload } from 'src/modules/auth/interfaces/login.interface';
 
 export class ContextProvider {
+  static getPolicyResult<T>(value: T) {
+    this.set(contextProviderKeys.POLICY_RESULT, value);
+  }
+
+  static setPolicyResult<T>(): T | undefined {
+    return this.get<T>(contextProviderKeys.POLICY_RESULT);
+  }
+
   static setPayload(value: LoginPayload) {
     this.set(contextProviderKeys.PAYLOAD, value);
   }
+
   static getPayload(): LoginPayload | undefined {
     return this.get<LoginPayload>(contextProviderKeys.PAYLOAD);
   }

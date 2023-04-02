@@ -3,6 +3,7 @@ import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+// Get user by email
 export class GetUserByEmailQuery implements IQuery {
   constructor(public email: string) {}
 }

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { plainToClassFromExist } from 'class-transformer';
 import { AbstractEntity } from '../abstract.entity';
 
-export type AbstracDtoOptions = {
+export type AbstractDtoOptions = {
   excludeFields?: boolean;
   ingnoreAssignValues?: boolean;
 };
@@ -25,7 +25,7 @@ export class AbstractDto {
     plainToClassFromExist(this, entity);
   }
 
-  constructor(entity: AbstractEntity, options?: AbstracDtoOptions) {
+  constructor(entity: AbstractEntity, options?: AbstractDtoOptions) {
     if (options?.ingnoreAssignValues) {
       if (!options?.excludeFields) {
         this.createdAt = entity.createdAt;

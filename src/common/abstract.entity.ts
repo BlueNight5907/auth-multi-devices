@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import type { AbstracDtoOptions, AbstractDto } from './dto/abstract.dto';
+import type { AbstractDtoOptions, AbstractDto } from './dto/abstract.dto';
 import type { Constructor } from './types';
 
 /**
@@ -12,7 +12,7 @@ import type { Constructor } from './types';
  */
 export interface IAbstractEntity<
   DTO extends AbstractDto,
-  O extends AbstracDtoOptions,
+  O extends AbstractDtoOptions,
 > {
   id: number;
   createdAt: Date;
@@ -23,7 +23,7 @@ export interface IAbstractEntity<
 
 export abstract class AbstractEntity<
   DTO extends AbstractDto = AbstractDto,
-  O extends AbstracDtoOptions = AbstracDtoOptions,
+  O extends AbstractDtoOptions = AbstractDtoOptions,
 > implements IAbstractEntity<DTO, O>
 {
   @PrimaryGeneratedColumn('increment')
@@ -39,7 +39,7 @@ export abstract class AbstractEntity<
   })
   updatedAt: Date;
 
-  private dtoClass?: Constructor<DTO, [AbstractEntity, O?]>;
+  protected dtoClass?: Constructor<DTO, [AbstractEntity, O?]>;
 
   toDto(options?: O): DTO {
     const dtoClass = this.dtoClass;

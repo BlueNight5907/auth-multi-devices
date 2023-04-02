@@ -1,13 +1,13 @@
 import { AbstractEntity } from 'src/common/abstract.entity';
-import { UseDto } from 'src/decorators';
+import { AbstractDtoOptions } from 'src/common/dto/abstract.dto';
 import { UserEntity } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { IAbstractEntity } from './../../../common/abstract.entity';
+import { IAbstractEntity } from 'src/common/abstract.entity';
 import { DeviceSessionDto } from './../dtos/device-session.dto';
-import { AbstracDtoOptions } from 'src/common/dto/abstract.dto';
+import { UseDto } from 'src/decorators/use-dto.decorator';
 
 export interface IDeviceSessionEntity
-  extends IAbstractEntity<DeviceSessionDto, AbstracDtoOptions> {
+  extends IAbstractEntity<DeviceSessionDto, AbstractDtoOptions> {
   deviceId: string;
   name: string;
   ua: string;
@@ -19,9 +19,9 @@ export interface IDeviceSessionEntity
   deletedId: string;
 }
 
-@UseDto(DeviceSessionDto)
 @Entity({ name: 'device_sessions' })
 @Index(['deviceId', 'userId', 'deletedId'], { unique: true })
+@UseDto(DeviceSessionDto)
 export class DeviceSessionEntity
   extends AbstractEntity<DeviceSessionDto>
   implements IDeviceSessionEntity

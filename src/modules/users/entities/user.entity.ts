@@ -1,14 +1,15 @@
-import { DeviceSessionEntity } from './../../device-sessions/entities/device-session.entity';
-import { IAbstractEntity } from './../../../common/abstract.entity';
-import { AbstractEntity } from '../../../common/abstract.entity';
-import { UseDto } from '../../../decorators';
+import { DeviceSessionEntity } from 'src/modules/device-sessions/entities/device-session.entity';
+import { IAbstractEntity } from 'src/common/abstract.entity';
+import { AbstractEntity } from 'src/common/abstract.entity';
+
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { UserDto } from '../dtos/user.dto';
 import { RoleType } from 'src/constants';
-import { AbstracDtoOptions } from 'src/common/dto/abstract.dto';
+import { AbstractDtoOptions } from 'src/common/dto/abstract.dto';
+import { UseDto } from 'src/decorators/use-dto.decorator';
 
 export interface IUserEntity
-  extends IAbstractEntity<UserDto, AbstracDtoOptions> {
+  extends IAbstractEntity<UserDto, AbstractDtoOptions> {
   name: string;
   email: string;
   password: string;

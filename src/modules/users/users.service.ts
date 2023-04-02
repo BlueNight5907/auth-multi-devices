@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { ExistUserException } from './exceptions/exist-user.exception';
 import { GetUserByEmailQuery } from './queries/get-user.query';
+import { GetUserByIdQuery } from './queries/get-user-by-id.query';
 
 @Injectable()
 export class UsersService {
@@ -28,9 +29,15 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOneByEmail(email: string) {
+  findOneByEmail(email: string): Promise<UserEntity | null> {
     return this.queryBus.execute<GetUserByEmailQuery, UserEntity | null>(
       new GetUserByEmailQuery(email),
+    );
+  }
+
+  findOneById(id: number): Promise<UserEntity | null> {
+    return this.queryBus.execute<GetUserByIdQuery, UserEntity | null>(
+      new GetUserByIdQuery(id),
     );
   }
 

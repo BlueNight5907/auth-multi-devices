@@ -6,4 +6,5 @@ export * from './validator.decorators';
 export * from './virtual-column.decorator';
 export * from './http.decorators';
 export * from './swagger.schema';
-export * from './use-dto.decorator';
+export * from './public-route.decorator';
+export * from './policy.decorator';

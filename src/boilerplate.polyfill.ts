@@ -8,7 +8,10 @@ import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import type { Alias } from 'typeorm/query-builder/Alias';
 
 import type { AbstractEntity } from './common/abstract.entity';
-import type { AbstracDtoOptions, AbstractDto } from './common/dto/abstract.dto';
+import type {
+  AbstractDtoOptions,
+  AbstractDto,
+} from './common/dto/abstract.dto';
 import { PageDto } from './common/dto/page.dto';
 import { PageMetaDto } from './common/dto/page-meta.dto';
 import type { PageOptionsDto } from './common/dto/page-options.dto';
@@ -70,12 +73,12 @@ declare global {
   export type Uuid = string & { _uuidBrand: undefined };
 
   interface Array<T> {
-    toDtos<Dto extends AbstractDto, O extends AbstracDtoOptions>(
+    toDtos<Dto extends AbstractDto, O extends AbstractDtoOptions>(
       this: T[],
       options?: O,
     ): Dto[];
 
-    toPageDto<Dto extends AbstractDto, O extends AbstracDtoOptions>(
+    toPageDto<Dto extends AbstractDto, O extends AbstractDtoOptions>(
       this: T[],
       pageMetaDto: PageMetaDto,
       options?: O,
@@ -145,14 +148,14 @@ declare module 'typeorm' {
 Array.prototype.toDtos = function <
   Entity extends AbstractEntity<Dto>,
   Dto extends AbstractDto,
-  O extends AbstracDtoOptions,
+  O extends AbstractDtoOptions,
 >(options?: O): Dto[] {
   return compact(
     map<Entity, Dto>(this as Entity[], (item) => item.toDto(options)),
   );
 };
 
-Array.prototype.toPageDto = function <O extends AbstracDtoOptions>(
+Array.prototype.toPageDto = function <O extends AbstractDtoOptions>(
   pageMetaDto: PageMetaDto,
   options?: O,
 ) {

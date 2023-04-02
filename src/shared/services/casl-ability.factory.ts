@@ -3,7 +3,9 @@ import {
   PureAbility as Ability,
   AbilityBuilder,
   AbilityClass,
+  ConditionsMatcher,
   ExtractSubjectType,
+  MatchConditions,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import { Action, RoleType } from 'src/constants';
@@ -15,6 +17,9 @@ import {
   Subjects,
 } from './casl-ability/ability.interface';
 import { AdminAbility } from './casl-ability/admin-ability';
+
+const lambdaMatcher: ConditionsMatcher<MatchConditions> = (matchConditions) =>
+  matchConditions;
 
 @Injectable()
 export class CaslAbilityFactory {
@@ -38,6 +43,7 @@ export class CaslAbilityFactory {
     return build({
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
+      conditionsMatcher: lambdaMatcher,
     });
   }
 

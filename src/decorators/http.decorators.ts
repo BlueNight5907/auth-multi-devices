@@ -5,47 +5,54 @@ import {
   Param,
   ParseUUIDPipe,
   PipeTransform,
-  SetMetadata,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import type { Type } from '@nestjs/common/interfaces';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { RoleType } from 'src/constants';
+import { Roles } from 'src/common/dto/roles.dto';
+import { Action, RoleType } from 'src/constants';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import {
-  AuthUserDetail,
-  AuthUserInterceptor,
-} from 'src/interceptors/auth-user-interceptor.service';
+import { PoliciesGuard } from 'src/guards/policies.guard';
+import { AppAbility } from 'src/shared/services/casl-ability/ability.interface';
+import { CheckPolicies, PolicyHandler } from './policy.decorator';
+import { PublicRoute } from './public-route.decorator';
 
 export function Auth(
   roles: RoleType[] = [],
-  options?: Partial<{ public: boolean; userDetail: boolean }>,
+  options?: Partial<{
+    public: boolean;
+    handlers: PolicyHandler[];
+  }>,
 ): MethodDecorator {
   const isPublicRoute = options?.public;
-  const isUserDetail = options?.userDetail ?? false;
+  const handlers = options?.handlers ?? [];
+
+  const checkRoles: PolicyHandler = {
+    action: Action.Access,
+    subject: new Roles(roles),
+  };
 
   return applyDecorators(
-    SetMetadata('roles', roles),
-    UseGuards(AuthGuard({ public: isPublicRoute }), RolesGuard),
+    PublicRoute(isPublicRoute),
+    CheckPolicies(checkRoles, ...handlers),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
-    AuthUserDetail(isUserDetail),
-    UseInterceptors(AuthUserInterceptor),
+    UseGuards(AuthGuard({ public: isPublicRoute }), PoliciesGuard),
   );
 }
 export function AuthUser() {
   return createParamDecorator((_data: unknown, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if (
-      user?.[Symbol.for('isPublic')] ||
-      request.user?.[Symbol.for('notUserDetail')]
-    ) {
-      return;
-    }
     return user;
+  })();
+}
+
+export function Ability() {
+  return createParamDecorator((_data: unknown, context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest();
+    const ability: AppAbility = request.ability;
+    return ability;
   })();
 }
 

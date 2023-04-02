@@ -5,9 +5,10 @@ import { UserEntity } from './entities/user.entity';
 import { GetUserByEmailHandler } from './queries/get-user.query';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { GetUserByIdHandler } from './queries/get-user-by-id.query';
 
 const commands = [CreateUserHandler];
-const queries = [GetUserByEmailHandler];
+const queries = [GetUserByEmailHandler, GetUserByIdHandler];
 @Module({
   controllers: [UsersController],
   providers: [UsersService, ...commands, ...queries],
