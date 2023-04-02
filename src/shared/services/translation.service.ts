@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { translationKeys } from './../../constants';
 import { I18nService, TranslateOptions } from 'nestjs-i18n';
 import { ContextProvider } from 'src/providers/context-provider';
-import { isArray, isString, map, isObject } from 'lodash';
+import { isArray, isString, map, isObject, isNil } from 'lodash';
 import { ITranslationDecoratorInterface } from 'src/common/interfaces';
 
 @Injectable()
@@ -15,10 +15,8 @@ export class TranslationService {
       lang: ContextProvider.getLanguage(),
     });
 
-    if (key === message) {
-      return this.i18n.translate(`${key}`, {
-        ...options,
-      });
+    if (key === message && !isNil(options?.defaultValue)) {
+      return options.defaultValue;
     }
 
     return message;
@@ -37,9 +35,13 @@ export class TranslationService {
               );
 
             if (translateDec) {
-              return this.translate(
-                `${translateDec.translationKey ?? key}.${value}`,
-              );
+              const translationKey = `${
+                translateDec.translationKey ?? key
+              }.${value}`;
+
+              const translationValue = await this.translate(translationKey);
+              data[key] = translationValue;
+              return translationValue;
             }
 
             return;
@@ -58,6 +60,8 @@ export class TranslationService {
           if (isObject(value)) {
             return this.translateNecessaryKeys(value);
           }
+
+          return value;
         }),
       );
     }

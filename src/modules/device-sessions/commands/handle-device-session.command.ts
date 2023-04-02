@@ -24,6 +24,7 @@ export class HandleDeviceSessionHandler
     private readonly dsRepository: Repository<DeviceSessionEntity>,
     private readonly apiConfigService: ApiConfigService,
   ) {}
+
   async execute(
     command: CreateDeviceSessionCommand,
   ): Promise<DeviceSessionEntity> {

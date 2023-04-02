@@ -3,11 +3,11 @@ import { contextProviderKeys, LanguageCode } from 'src/constants';
 import { LoginPayload } from 'src/modules/auth/interfaces/login.interface';
 
 export class ContextProvider {
-  static getPolicyResult<T>(value: T) {
+  static setPolicyResult<T>(value: T) {
     this.set(contextProviderKeys.POLICY_RESULT, value);
   }
 
-  static setPolicyResult<T>(): T | undefined {
+  static getPolicyResult<T>(): T | undefined {
     return this.get<T>(contextProviderKeys.POLICY_RESULT);
   }
 

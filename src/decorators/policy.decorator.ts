@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common';
+import { ExecutionContext, SetMetadata } from '@nestjs/common';
 import { Constructor } from 'src/common/types';
 import { Action, CHECK_POLICIES_KEY } from 'src/constants';
 import {
@@ -11,7 +11,10 @@ interface IPolicyHandler {
 }
 
 export abstract class AbstractPolicyHandler implements IPolicyHandler {
-  abstract handle(ability: AppAbility): Promise<boolean> | boolean;
+  abstract handle(
+    ability: AppAbility,
+    context?: ExecutionContext,
+  ): Promise<boolean> | boolean;
 }
 
 type PolicyHandlerMap = { action: Action; subject: Subjects };

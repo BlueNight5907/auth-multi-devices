@@ -35,9 +35,9 @@ export class UsersService {
     );
   }
 
-  findOneById(id: number): Promise<UserEntity | null> {
+  findOneById(id: number, deviceId?: string): Promise<UserEntity | null> {
     return this.queryBus.execute<GetUserByIdQuery, UserEntity | null>(
-      new GetUserByIdQuery(id),
+      new GetUserByIdQuery(id, deviceId),
     );
   }
 

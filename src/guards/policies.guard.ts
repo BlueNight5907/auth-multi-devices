@@ -40,7 +40,7 @@ export class PoliciesGuard implements CanActivate {
 
     await policyHandlers.reduce(async (promise, handler) => {
       await promise;
-      const matchRule = await this.execPolicyHandler(handler, ability);
+      const matchRule = await this.execPolicyHandler(handler, ability, context);
       if (!matchRule) {
         throw new ForbiddenException();
       }
@@ -50,7 +50,11 @@ export class PoliciesGuard implements CanActivate {
     return true;
   }
 
-  private async execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
+  private async execPolicyHandler(
+    handler: PolicyHandler,
+    ability: AppAbility,
+    context: ExecutionContext,
+  ) {
     if (typeof handler === 'object') {
       return ability.can(handler.action, handler.subject);
     }
@@ -59,6 +63,6 @@ export class PoliciesGuard implements CanActivate {
       handler,
     );
 
-    return handlerService.handle(ability);
+    return handlerService.handle(ability, context);
   }
 }

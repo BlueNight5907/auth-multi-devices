@@ -6,7 +6,7 @@ import { DeviceSessionEntity } from './../entities/device-session.entity';
 export class GetDeviceSessionQuery implements IQuery {
   constructor(
     public deviceId: string,
-    public userId: number,
+    public userId?: number,
     public isDeleted: boolean = false,
   ) {}
 }

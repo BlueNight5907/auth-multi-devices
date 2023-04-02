@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 import { ApiConfigService } from 'src/shared/services/api-config.service';
@@ -23,13 +23,18 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(request: IRequest, payload: LoginPayload) {
     const { fingerprint } = request;
+
     if (fingerprint.hash !== payload.deviceId) {
       throw new TokenNotIssueForDeviceException();
     }
 
-    const user = await this.userService.findOneById(payload.userId);
+    const user = await this.userService.findOneById(
+      payload.userId,
+      payload.deviceId,
+    );
+
     if (!user) {
-      throw new TokenNotIssueForDeviceException();
+      throw new UnauthorizedException();
     }
 
     ContextProvider.setPayload(payload);

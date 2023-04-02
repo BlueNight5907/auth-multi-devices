@@ -1,7 +1,7 @@
-import { Action, RoleType } from 'src/constants';
-import { RoleAbility } from './ability.interface';
-import { DeviceSessionEntity } from 'src/modules/device-sessions/entities/device-session.entity';
 import { Roles } from 'src/common/dto/roles.dto';
+import { Action } from 'src/constants';
+import { DeviceSessionEntity } from 'src/modules/device-sessions/entities/device-session.entity';
+import { RoleAbility } from './ability.interface';
 
 export class UserAbility extends RoleAbility {
   createAbility(): void {

@@ -3,5 +3,6 @@
   "exist_user": "Exist user with email {email}",
   "user_not_found": "Not found user with email {email}",
   "login_exception": "The password is wrong or the account doesn't exist",
-  "token_not_issue_for_device": "Token not issued for this device"
+  "token_not_issue_for_device": "Token not issued for this device",
+  "device_not_found": "Device not found exception"
 }

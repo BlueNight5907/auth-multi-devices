@@ -1,21 +1,21 @@
 import {
   Body,
   Controller,
-  Get,
   Headers,
   Logger,
   Post,
   Request,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request as RequestType } from 'express';
+import { ApiTags } from '@nestjs/swagger';
+import { IRequest } from 'src/common/interfaces';
+import { Auth } from 'src/decorators';
+import { ContextProvider } from 'src/providers';
+import { DeviceSessionEntity } from '../device-sessions/entities/device-session.entity';
 import { CreateUserDto } from './../users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { LoginMetadata } from './interfaces/login.interface';
-import { IRequest } from 'src/common/interfaces';
+import { LogoutDevicePolicy } from './policy-handlers/logout-device-session.policy-handler';
 
 @ApiTags('v1 - auth')
 @Controller()
@@ -47,18 +47,10 @@ export class AuthController {
     return this.authService.signUp(body);
   }
 
-  @Get('test')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @Post('sign-out')
+  @Auth([], { handlers: [LogoutDevicePolicy] })
   test() {
-    return {};
-  }
-
-  @Get('test2')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  test2(@Request() req: RequestType & { fingerprint: any }) {
-    console.debug(req.fingerprint);
-    return {};
+    const device = ContextProvider.getPolicyResult<DeviceSessionEntity>();
+    return this.authService.signOut(device);
   }
 }

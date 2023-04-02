@@ -48,4 +48,8 @@ export class AuthService {
     loginResult.token = token;
     return loginResult;
   }
+
+  signOut(device: DeviceSessionEntity) {
+    return this.deviceSessionService.signOut(device);
+  }
 }
