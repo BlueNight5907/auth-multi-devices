@@ -6,6 +6,9 @@ export class LoginPayloadDto extends UserDto {
   @StringField()
   token: string;
 
+  @StringField()
+  refreshToken: string;
+
   constructor(entity: UserEntity) {
     super(entity, { excludeFields: false });
   }

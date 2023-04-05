@@ -6,7 +6,7 @@ import {
   Post,
   Request,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IRequest } from 'src/common/interfaces';
 import { Auth } from 'src/decorators';
 import { ContextProvider } from 'src/providers';
@@ -16,6 +16,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { LoginMetadata } from './interfaces/login.interface';
 import { LogoutDevicePolicy } from './policy-handlers/logout-device-session.policy-handler';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @ApiTags('v1 - auth')
 @Controller()
@@ -49,8 +50,15 @@ export class AuthController {
 
   @Post('sign-out')
   @Auth([], { handlers: [LogoutDevicePolicy] })
-  test() {
+  signOut() {
     const device = ContextProvider.getPolicyResult<DeviceSessionEntity>();
     return this.authService.signOut(device);
+  }
+
+  @Post('refresh-token')
+  @ApiBearerAuth()
+  reAuth(@Request() request: IRequest, @Body() body: RefreshTokenDto) {
+    const [_, token] = request.headers.authorization.split(' ');
+    return this.authService.reAuth(token, body.refreshToken);
   }
 }

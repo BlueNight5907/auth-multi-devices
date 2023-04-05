@@ -1,7 +1,7 @@
 import { DeviceSessionsService } from './../device-sessions/device-sessions.service';
 import { DeviceSessionEntity } from './../device-sessions/entities/device-session.entity';
 import { LoginDto } from './dtos/login.dto';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from './../users/dtos/create-user.dto';
@@ -10,6 +10,7 @@ import { LoginException } from './exceptions/login.exception';
 import { validateHash } from 'src/common/utils';
 import { JwtService } from '@nestjs/jwt';
 import { LoginPayloadDto } from './dtos/login-payload.dto';
+import { NewTokenDto } from './dtos/new-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,10 +47,38 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     const loginResult = new LoginPayloadDto(user);
     loginResult.token = token;
+    loginResult.refreshToken = deviceSession.refreshToken;
     return loginResult;
   }
 
   signOut(device: DeviceSessionEntity) {
     return this.deviceSessionService.signOut(device);
+  }
+
+  async reAuth(oldToken: string, refreshToken: string) {
+    const decode = this.jwtService.verify<LoginPayload>(oldToken, {
+      ignoreExpiration: true,
+    });
+    const { deviceId, userId } = decode;
+    const deviceSession = await this.deviceSessionService.getDeviceSession(
+      deviceId,
+      userId,
+    );
+
+    if (
+      deviceSession.refreshToken !== refreshToken ||
+      deviceSession.expiredAt < new Date()
+    ) {
+      throw new ForbiddenException();
+    }
+
+    const payload: LoginPayload = {
+      userId,
+      deviceId,
+    };
+
+    const newToken = this.jwtService.sign(payload);
+
+    return new NewTokenDto(newToken);
   }
 }
